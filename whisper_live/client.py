@@ -116,6 +116,8 @@ class Client:
                       (not self.transcript or
                         float(seg['start']) >= float(self.transcript[-1]['end']))):
                     self.transcript.append(seg)
+                    if self.callback:
+                        self.callback(seg)
         # update last received segment and last valid response time
         if self.last_received_segment is None or self.last_received_segment != segments[-1]["text"]:
             self.last_response_received = time.time()
@@ -128,8 +130,8 @@ class Client:
             utils.print_transcript(text)
 
         # Call the callback function if it exists
-        if self.callback:
-            self.callback(text)
+        # if self.callback:
+        #     self.callback(text)
 
     def on_message(self, ws, message):
         """

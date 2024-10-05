@@ -30,7 +30,8 @@ class Client:
         model="small",
         srt_file_path="output.srt",
         use_vad=True,
-        log_transcription=True
+        log_transcription=True,
+        callback=None  # Add this parameter
     ):
         """
         Initializes a Client instance for audio recording and streaming to a server.
@@ -59,6 +60,7 @@ class Client:
         self.last_segment = None
         self.last_received_segment = None
         self.log_transcription = log_transcription
+        self.callback = callback  # Store the callback function
 
         if translate:
             self.task = "translate"
@@ -125,6 +127,10 @@ class Client:
             utils.clear_screen()
             utils.print_transcript(text)
 
+        # Call the callback function if it exists
+        if self.callback:
+            self.callback(text)
+
     def on_message(self, ws, message):
         """
         Callback function called when a message is received from the server.
@@ -136,7 +142,6 @@ class Client:
         Args:
             ws (websocket.WebSocketApp): The WebSocket client instance.
             message (str): The received message from the server.
-
         """
         message = json.loads(message)
 
@@ -658,6 +663,7 @@ class TranscriptionClient(TranscriptionTeeClient):
         save_output_recording (bool, optional): Indicates whether to save recording from microphone.
         output_recording_filename (str, optional): File to save the output recording.
         output_transcription_path (str, optional): File to save the output transcription.
+        callback (callable, optional): A function to be called when new transcription text is available.
 
     Attributes:
         client (Client): An instance of the underlying Client class responsible for handling the WebSocket connection.
@@ -665,7 +671,10 @@ class TranscriptionClient(TranscriptionTeeClient):
     Example:
         To create a TranscriptionClient and start transcription on microphone audio:
         ```python
-        transcription_client = TranscriptionClient(host="localhost", port=9090)
+        def my_callback(text):
+            print(f"Transcription: {text}")
+
+        transcription_client = TranscriptionClient(host="localhost", port=9090, callback=my_callback)
         transcription_client()
         ```
     """
@@ -681,8 +690,19 @@ class TranscriptionClient(TranscriptionTeeClient):
         output_recording_filename="./output_recording.wav",
         output_transcription_path="./output.srt",
         log_transcription=True,
+        callback=None  # Add this parameter
     ):
-        self.client = Client(host, port, lang, translate, model, srt_file_path=output_transcription_path, use_vad=use_vad, log_transcription=log_transcription)
+        self.client = Client(
+            host, 
+            port, 
+            lang, 
+            translate, 
+            model, 
+            srt_file_path=output_transcription_path, 
+            use_vad=use_vad, 
+            log_transcription=log_transcription,
+            callback=callback  # Pass the callback to the Client instance
+        )
         if save_output_recording and not output_recording_filename.endswith(".wav"):
             raise ValueError(f"Please provide a valid `output_recording_filename`: {output_recording_filename}")
         if not output_transcription_path.endswith(".srt"):

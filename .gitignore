@@ -1,0 +1,47 @@
+# Python-related
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# IDE-related
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating system-related
+.DS_Store
+Thumbs.db
+
+# Project-specific
+output.srt
+*.log
+
+# Dependency management
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Miscellaneous
+*.bak
+*.tmp
+*.temp

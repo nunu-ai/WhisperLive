@@ -19,6 +19,7 @@ client = TranscriptionClient(
   use_vad=False,
   save_output_recording=False,                         # Only used for microphone input, False by Default
   output_recording_filename="./output_recording.wav",  # Only used for microphone input
+  log_transcription=False,
   callback=example_callback  # Add the callback function here
 )
 
